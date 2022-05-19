@@ -1,1 +1,9 @@
-
+Description: >
+    Aminu Ndakun / Udacity
+    This template deploys a test vpc
+Resources:
+    UdacityVPC:
+        Type: AWS::EC2::VPC
+        Properties:
+            CidrBlock: 10.0.0.0/16
+            EnableDnsHostnames: true   
