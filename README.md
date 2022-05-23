@@ -1,6 +1,6 @@
 # DevOps216921
 
-Script1
+Script1 - challenge.yml
 A CloudFormation script that will create and deploy apache server using the two Resources: AWS::EC2::SecurityGroup and AWS::EC2::Instance.
 
 SecurityGroup Properties
