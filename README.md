@@ -11,5 +11,3 @@ AMI AMzon Linux 2 AMI (HVM)
 AssociatePublicIpAddress: true
 instancetype t3.micro
 EC2 Servers associate network interface with the security group mentioned above.
-
-Script2- networkInfra.yml
