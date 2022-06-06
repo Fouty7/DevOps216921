@@ -1,0 +1,84 @@
+Parameters:
+  AMItoUse:
+      Description: AMI to use for our base image
+      Type: String
+Resources:
+  myVPC:
+    Description: VPC used to deploy our resources
+    Type: AWS::EC2::VPC
+    Properties:
+            CidrBlock: 10.0.0.0/16
+            EnableDnsHostnames: true
+            Tags: 
+                - Key: Name 
+                  Value: "ApacheVPC"
+  InternetGateway:
+        Type: AWS::EC2::InternetGateway
+  InternetGatewayAttachment:
+        Type: AWS::EC2::VPCGatewayAttachment
+        Properties:
+            InternetGatewayId: !Ref InternetGateway
+            VpcId: !Ref myVPC                
+  PublicSubnet: 
+        Type: AWS::EC2::Subnet
+        Properties:
+            VpcId: !Ref myVPC
+            CidrBlock: 10.0.0.0/24
+            MapPublicIpOnLaunch: true
+            Tags: 
+                - Key: Name 
+                  Value: "PublicSubnet"
+  PublicRouteTable:
+        Type: AWS::EC2::RouteTable
+        Properties: 
+            VpcId: !Ref myVPC
+            Tags: 
+                - Key: Name 
+                  Value: "RouteTable"
+  DefaultPublicRoute: 
+        Type: AWS::EC2::Route
+        DependsOn: InternetGatewayAttachment
+        Properties: 
+            RouteTableId: !Ref PublicRouteTable
+            DestinationCidrBlock: 0.0.0.0/0
+            GatewayId: !Ref InternetGateway
+  PublicSubnetRouteTableAssociation:
+        Type: AWS::EC2::SubnetRouteTableAssociation
+        Properties:
+            RouteTableId: !Ref PublicRouteTable
+            SubnetId: !Ref PublicSubnet                    
+  myWebAccessSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+        GroupDescription: Allow http to our test host
+        VpcId:
+          Ref: myVPC
+        SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        SecurityGroupEgress:
+        - IpProtocol: -1
+          FromPort: -1
+          ToPort: -1
+          CidrIp: 0.0.0.0/0
+  myWebServerInstance: 
+    Type: AWS::EC2::Instance
+    Properties:
+      AvailabilityZone: !Select [ 2, !GetAZs '' ]
+      InstanceType: t3.micro
+      ImageId: !Ref AMItoUse
+      NetworkInterfaces: 
+        - AssociatePublicIpAddress: "true"
+          DeviceIndex: "0"
+          GroupSet: 
+            - Ref: "myWebAccessSecurityGroup"
+          SubnetId: 
+            Ref: "PublicSubnet"
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          yum update -y
+          yum install -y httpd
+          systemctl start httpd

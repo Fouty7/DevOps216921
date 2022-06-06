@@ -1,12 +1,12 @@
 [
-    {
-        "ParameterKey": "EnvironmentName",
-        "ParameterValue": "TestEnvironment"
-    },
-    {
-        "ParameterKey": "VpcCIDR",
-        "ParameterValue": "10.0.0.0/16"
-    },
+	{
+		"ParameterKey": "EnvironmentName",
+		"ParameterValue": "HightAvailabilityAppProject"
+	},
+	{
+		"ParameterKey": "VpcCIDR",
+		"ParameterValue": "10.0.0.0/16"
+	},
 	{
 		"ParameterKey": "PublicSubnet1CIDR",
 		"ParameterValue": "10.0.0.0/24"

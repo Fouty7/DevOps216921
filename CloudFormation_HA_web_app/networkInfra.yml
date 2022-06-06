@@ -1,37 +1,33 @@
-Description: >
-    Aminu Ndakun
-    Deploys a VPC, with a pair of public and private subnets spread 
-    across two Availabilty Zones AZ. Also included is an Internet Gateway, with a default 
-    route on the public subnets. A pair of NAT Gateways (one in each AZ), 
+Description: > 
+    This template deploys a VPC, with a pair of public and private subnets spread 
+    across two Availabilty Zones. It deploys an Internet Gateway, with a default 
+    route on the public subnets. It deploys a pair of NAT Gateways (one in each AZ), 
     and default routes for them in the private subnets.
+
 Parameters:
     EnvironmentName:
-        Description: An environment name that will be prefixed to the resource names
+        Description: An environment name that will be prefixed to resource names
         Type: String
-    VpcCIDR:
-        Description: Please enter the ip range (CIDR notation) for this VPC
+    VpcCIDR: 
+        Description: Please enter the IP range (CIDR notation) for this VPC
         Type: String
         Default: 10.0.0.0/16
     PublicSubnet1CIDR:
         Description: Please enter the IP range (CIDR notation) for the public subnet in the first Availability Zone
         Type: String
         Default: 10.0.0.0/24
-
     PublicSubnet2CIDR:
         Description: Please enter the IP range (CIDR notation) for the public subnet in the second Availability Zone
         Type: String
         Default: 10.0.1.0/24
-
     PrivateSubnet1CIDR:
         Description: Please enter the IP range (CIDR notation) for the private subnet in the first Availability Zone
         Type: String
         Default: 10.0.2.0/24
-
     PrivateSubnet2CIDR:
         Description: Please enter the IP range (CIDR notation) for the private subnet in the second Availability Zone
         Type: String
         Default: 10.0.3.0/24
-    
 Resources:
     VPC: 
         Type: AWS::EC2::VPC
@@ -40,7 +36,7 @@ Resources:
             EnableDnsHostnames: true
             Tags: 
                 - Key: Name 
-                  Value: !Ref EnvironmentName       
+                  Value: !Ref EnvironmentName
     InternetGateway:
         Type: AWS::EC2::InternetGateway
         Properties:
@@ -97,33 +93,21 @@ Resources:
         DependsOn: InternetGatewayAttachment
         Properties: 
             Domain: vpc
-            Tags:
-                - Key: Name
-                  Value: !Sub ${EnvironmentName} NatGEIP1
     NatGateway2EIP:
         Type: AWS::EC2::EIP
         DependsOn: InternetGatewayAttachment
         Properties:
             Domain: vpc
-            Tags:
-                - Key: Name
-                  Value: !Sub ${EnvironmentName} NatGEIP2
     NatGateway1: 
         Type: AWS::EC2::NatGateway
         Properties: 
             AllocationId: !GetAtt NatGateway1EIP.AllocationId
             SubnetId: !Ref PublicSubnet1
-            Tags:
-                - Key: Name
-                  Value: !Sub ${EnvironmentName} NatGATEWAY1
     NatGateway2: 
         Type: AWS::EC2::NatGateway
         Properties:
             AllocationId: !GetAtt NatGateway2EIP.AllocationId
             SubnetId: !Ref PublicSubnet2
-            Tags:
-                - Key: Name
-                  Value: !Sub ${EnvironmentName} NatGATEWAY2
     PublicRouteTable:
         Type: AWS::EC2::RouteTable
         Properties: 
@@ -184,60 +168,63 @@ Resources:
         Properties:
             RouteTableId: !Ref PrivateRouteTable2
             SubnetId: !Ref PrivateSubnet2
-
-    Outputs: 
-    
+Outputs: 
     VPC: 
         Description: A reference to the created VPC
         Value: !Ref VPC
         Export:
           Name: !Sub ${EnvironmentName}-VPCID
+
     VPCPublicRouteTable:
         Description: Public Routing
         Value: !Ref PublicRouteTable
         Export:
           Name: !Sub ${EnvironmentName}-PUB-RT
+
     VPCPrivateRouteTable1:
         Description: Private Routing AZ1
         Value: !Ref PrivateRouteTable1
         Export:
           Name: !Sub ${EnvironmentName}-PRI1-RT
+
     VPCPrivateRouteTable2:
         Description: Private Routing AZ2
         Value: !Ref PrivateRouteTable2
         Export:
           Name: !Sub ${EnvironmentName}-PRI2-RT
+
     PublicSubnets:
         Description: A list of the public subnets
         Value: !Join [ ",", [ !Ref PublicSubnet1, !Ref PublicSubnet2 ]]
         Export:
           Name: !Sub ${EnvironmentName}-PUB-NETS
+
     PrivateSubnets:
         Description: A list of the private subnets
         Value: !Join [ ",", [ !Ref PrivateSubnet1, !Ref PrivateSubnet2 ]]
         Export:
           Name: !Sub ${EnvironmentName}-PRIV-NETS
+
     PublicSubnet1:
         Description: A reference to the public subnet in the 1st Availability Zone
         Value: !Ref PublicSubnet1
         Export:
           Name: !Sub ${EnvironmentName}-PUB1-SN
+
     PublicSubnet2: 
         Description: A reference to the public subnet in the 2nd Availability Zone
         Value: !Ref PublicSubnet2
         Export:
           Name: !Sub ${EnvironmentName}-PUB2-SN
+
     PrivateSubnet1:
         Description: A reference to the private subnet in the 1st Availability Zone
         Value: !Ref PrivateSubnet1
         Export:
           Name: !Sub ${EnvironmentName}-PRI1-SN
+
     PrivateSubnet2: 
         Description: A reference to the private subnet in the 2nd Availability Zone
         Value: !Ref PrivateSubnet2
         Export:
-          Name: !Sub ${EnvironmentName}-PRI2-SN        
-              
-
-            
-
+          Name: !Sub ${EnvironmentName}-PRI2-SN
