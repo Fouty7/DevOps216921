@@ -58,11 +58,12 @@ Resources:
                 - Key: Name 
                   Value: !Sub ${EnvironmentName} Private Routes (AZ1)
     DefaultPrivateRoute1:
+        DependsOn: AttachVpnGateway
         Type: AWS::EC2::Route
         Properties:
             RouteTableId: !Ref PrivateRouteTable1
             DestinationCidrBlock: 0.0.0.0/0
-            NatGatewayId: !Ref VPNConnect
+            GatewayId: !Ref VPCVGW
     PrivateSubnet1RouteTableAssociation:
         Type: AWS::EC2::SubnetRouteTableAssociation
         Properties:
@@ -76,11 +77,12 @@ Resources:
                 - Key: Name 
                   Value: !Sub ${EnvironmentName} Private Routes (AZ2)
     DefaultPrivateRoute2:
+        DependsOn: AttachVpnGateway
         Type: AWS::EC2::Route
         Properties:
             RouteTableId: !Ref PrivateRouteTable2
             DestinationCidrBlock: 0.0.0.0/0
-            NatGatewayId: !Ref VPNConnect
+            GatewayId: !Ref VPCVGW
     PrivateSubnet2RouteTableAssociation:
         Type: AWS::EC2::SubnetRouteTableAssociation
         Properties:
@@ -118,8 +120,7 @@ Resources:
                 - Key: Name
                   Value: !Sub "${EnvironmentName} On Prem Gateway"
             Type: ipsec.1
-	
-    Outputs:   
+Outputs:   
     VPC: 
         Description: A reference to the created VPC
         Value: !Ref VPC
