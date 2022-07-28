@@ -1,18 +1,16 @@
 # DevOps216921
 
-Aminu Ndakun
-
-AWS CLOUDFORMATION
+## AWS CloudFormation
 Deploying/provisioning Network and Compute AWS resources using AWS CloudFormation templates
 Templates have been written generally in .yml format.
 
-Dependencies:
+Dependensies:
 AWS Account
 AWS Programmatic IAM user with Access Key and Secret Key
 Code Editor to change some parameters/resource ids
 Git Bash/Power shell
 
-Getting Started:
+## Getting started:
 Clone this repo
 Open Git Bash or power shell
 Cd to the directory in which your cloned files are
